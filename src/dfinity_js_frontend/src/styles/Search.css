@@ -1,0 +1,17 @@
+.search {
+    padding: 20px;
+  }
+  
+  .car-list {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .car-card {
+    margin: 10px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 200px;
+  }
+  
