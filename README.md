@@ -34,7 +34,7 @@ Welcome to the CarSharing App repository! This application allows users to find 
 - **Frontend**: React.js, TypeScript
 - **Backend**: DFINITY Internet Computer (IC), Candid (DFINITY's interface description language)
 - **APIs**: @dfinity/agent for communication with backend canisters
-- **Styling**: CSS Modules, Tailwind CSS
+
 - **Other Tools**: Node.js, npm or yarn
 
 ## Getting Started
@@ -52,7 +52,7 @@ Before running the application, ensure you have the following installed:
 1. **Clone the repository**:
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/Xscrypto001/car_share-icp.git
    cd carsharing-app
    ```
 
