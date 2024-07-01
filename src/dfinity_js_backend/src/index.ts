@@ -25,7 +25,7 @@ const cars: Car[] = [
   { id: "2", model: "BMW i3", owner: Principal.fromText("bbbbb-bb"), available: false },
 ];
 
-// Example users
+// Persistent storage for users
 const users: User[] = [
   { principal: Principal.fromText("aaaaa-aa"), role: "owner" },
   { principal: Principal.fromText("bbbbb-bb"), role: "renter" },
@@ -43,7 +43,23 @@ async function getCurrentUser(): Promise<Principal> {
   return Principal.anonymous(); // Placeholder, replace with actual authentication logic
 }
 
-// Example functions to interact with the car data
+// Add a new user
+export const addUser = (principal: Principal, role: Role): void => {
+  if (users.find(user => user.principal.toText() === principal.toText())) {
+    throw new Error("User already exists");
+  }
+  users.push({ principal, role });
+};
+
+// Add a new car
+export const addCar = (id: string, model: string, owner: Principal): void => {
+  if (cars.find(car => car.id === id)) {
+    throw new Error("Car with this ID already exists");
+  }
+  cars.push({ id, model, owner, available: true });
+};
+
+// Get available cars
 export const getAvailableCars = async (): Promise<Car[]> => {
   const principal = await getCurrentUser();
   const role = getUserRole(principal);
@@ -52,6 +68,7 @@ export const getAvailableCars = async (): Promise<Car[]> => {
   return cars.filter(car => car.available);
 };
 
+// Get car details
 export const getCarDetails = async (id: string): Promise<Car | undefined> => {
   const principal = await getCurrentUser();
   const role = getUserRole(principal);
@@ -60,6 +77,7 @@ export const getCarDetails = async (id: string): Promise<Car | undefined> => {
   return cars.find(car => car.id === id);
 };
 
+// Book a car
 export const bookCar = async (id: string): Promise<boolean> => {
   const principal = await getCurrentUser();
   const role = getUserRole(principal);
@@ -79,11 +97,34 @@ export const bookCar = async (id: string): Promise<boolean> => {
   return true;
 };
 
+// Return a car
+export const returnCar = async (id: string): Promise<boolean> => {
+  const principal = await getCurrentUser();
+  const role = getUserRole(principal);
+  if (!role) throw new Error("User not authorized");
+
+  const car = cars.find(car => car.id === id);
+  if (!car) throw new Error("Car not found");
+  if (car.available) throw new Error("Car is already available");
+
+  // Additional authorization check if needed
+  // Example: if role is "owner", ensure they are not returning a car they do not own
+  if (role === "owner" && car.owner.toText() !== principal.toText()) {
+    throw new Error("Owners can only return their own cars");
+  }
+
+  car.available = true;
+  return true;
+};
+
 // Exported Candid interface
 export const idlFactory: IDL.InterfaceFactory = ({ IDL }) => {
   return IDL.Service({
     getAvailableCars: IDL.Func([], [IDL.Vec(IDL.Record({ id: IDL.Text, model: IDL.Text, owner: IDL.Principal, available: IDL.Bool }))], ['query']),
     getCarDetails: IDL.Func([IDL.Text], [IDL.Opt(IDL.Record({ id: IDL.Text, model: IDL.Text, owner: IDL.Principal, available: IDL.Bool }))], ['query']),
     bookCar: IDL.Func([IDL.Text], [IDL.Bool], []),
+    returnCar: IDL.Func([IDL.Text], [IDL.Bool], []),
+    addUser: IDL.Func([IDL.Principal, IDL.Text], [], []),
+    addCar: IDL.Func([IDL.Text, IDL.Text, IDL.Principal], [], []),
   });
 };

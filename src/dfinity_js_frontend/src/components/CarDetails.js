@@ -6,34 +6,48 @@ import '../styles/CarDetails.css';
 const CarDetails = () => {
   const { id } = useParams();
   const [car, setCar] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function fetchCarDetails() {
-      if (id) {
-        const carDetails = await getCarDetails(id);
-        setCar(carDetails);
+      try {
+        if (id) {
+          const carDetails = await getCarDetails(id);
+          setCar(carDetails);
+        }
+      } catch (err) {
+        setError('Failed to fetch car details.');
+      } finally {
+        setLoading(false);
       }
     }
     fetchCarDetails();
   }, [id]);
 
   const handleBook = async () => {
-    if (id) {
-      const success = await bookCar(id);
-      if (success) {
-        setCar({ ...car, available: false });
+    try {
+      if (id) {
+        const success = await bookCar(id);
+        if (success) {
+          setCar({ ...car, available: false });
+        }
       }
+    } catch (err) {
+      setError('Failed to book the car.');
     }
   };
 
-  if (!car) return <div>Loading...</div>;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div className="error">{error}</div>;
+  if (!car) return <div>No car details found.</div>;
 
   return (
     <div className="car-details">
       <h1>{car.model}</h1>
-      <p>Owner: {car.owner}</p>
-      <p>Status: {car.available ? 'Available' : 'Booked'}</p>
-      {car.available && <button onClick={handleBook}>Book</button>}
+      <p><strong>Owner:</strong> {car.owner}</p>
+      <p><strong>Status:</strong> {car.available ? 'Available' : 'Booked'}</p>
+      {car.available && <button onClick={handleBook} className="book-button">Book</button>}
     </div>
   );
 };
