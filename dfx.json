@@ -1,35 +1,39 @@
 {
-    "canisters": {
-     
-      "dfinity_js_backend": {
-        "type": "custom",
-        "main": "src/dfinity_js_backend/src/index.ts",
-        "candid": "src/dfinity_js_backend/src/backend.did",
-        "build": "npx azle dfinity_js_backend",
-        "wasm": ".azle/dfinity_js_backend/dfinity_js_backend.wasm",
-        "gzip": true
+  "canisters": {
+
+    "dfinity_js_backend_1": {
+      "type": "custom",
+      "main": "src/dfinity_js_backend/src/index.ts",
+      "candid": "src/dfinity_js_backend/src/index.did",
+      "build": "npx azle dfinity_js_backend",
+      "wasm": ".azle/dfinity_js_backend/dfinity_js_backend.wasm",
+      "gzip": true
+    },
+    "dfinity_js_frontend": {
+      "dependencies": [
+        "dfinity_js_backend_1",
+        "dfinity_js_backend_2"
+      ],
+      "frontend": {
+        "entrypoint": "src/dfinity_js_frontend/src/index.html"
       },
-      "dfinity_js_frontend": {
-        "dependencies": [
-          "dfinity_js_backend"
-        ],
-        "frontend": {
-          "entrypoint": "src/dfinity_js_frontend/src/index.html"
-        },
-        "source": [
-          "src/dfinity_js_frontend/src/assets",
-          "dist/dfinity_js_frontend/"
-        ],
-        "type": "assets",
-        "gzip": true
-      }
-    },
-    "defaults": {
-      "build": {
-        "args": "",
-        "packtool": ""
-      }
-    },
-    "output_env_file": ".env",
-    "version": 1
-  }
+      "source": [
+        "src/dfinity_js_frontend/src/assets",
+        "dist/dfinity_js_frontend/"
+      ],
+      "type": "assets",
+      "gzip": true
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
+
+
+
