@@ -11,8 +11,7 @@
     },
     "dfinity_js_frontend": {
       "dependencies": [
-        "dfinity_js_backend_1",
-        "dfinity_js_backend_2"
+        "dfinity_js_backend_1"
       ],
       "frontend": {
         "entrypoint": "src/dfinity_js_frontend/src/index.html"
